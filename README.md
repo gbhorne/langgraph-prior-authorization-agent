@@ -33,7 +33,7 @@ A clinician orders CPT 95251 (Continuous Glucose Monitoring) for a patient with 
 2. **PA-2** — Fetches the payer's DTR questionnaire (with Firestore cache)
 3. **PA-3** — Uses Gemini to answer each questionnaire item with citations to real FHIR resources
 4. **PA-4** — Assembles a Da Vinci PAS-compliant FHIR transaction bundle and runs Cloud DLP audit
-5. **⏸ INTERRUPT** — Graph pauses. Clinician inspects bundle, DLP findings, and citation failures
+5. **INTERRUPT** — Graph pauses. Clinician inspects bundle, DLP findings, and citation failures
 6. **PA-5** — On clinician approval, submits to payer `$submit`, writes ClaimResponse to FHIR, publishes to Pub/Sub
 
 ---
@@ -56,7 +56,7 @@ questionnaire_filler ──[citation hard fail or error]──► __end__
 bundle_assembler ──[DLP block or error]──► __end__
     │
     ▼ [DLP passed]
-⏸ INTERRUPT — clinician review
+INTERRUPT — clinician review
     │
     ▼ [approved]
 pas_submit
