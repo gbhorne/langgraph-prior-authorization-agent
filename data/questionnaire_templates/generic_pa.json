@@ -1,0 +1,32 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "generic-pa",
+  "title": "Generic Prior Authorization Questionnaire",
+  "status": "active",
+  "item": [
+    {
+      "linkId": "q1",
+      "text": "What is the primary diagnosis code (ICD-10) for this request?",
+      "type": "string",
+      "required": true
+    },
+    {
+      "linkId": "q2",
+      "text": "Is this service medically necessary? Provide clinical justification.",
+      "type": "string",
+      "required": true
+    },
+    {
+      "linkId": "q3",
+      "text": "Has the patient tried alternative treatments? If yes, describe.",
+      "type": "string",
+      "required": false
+    },
+    {
+      "linkId": "q4",
+      "text": "What is the expected duration or frequency of this service?",
+      "type": "string",
+      "required": true
+    }
+  ]
+}

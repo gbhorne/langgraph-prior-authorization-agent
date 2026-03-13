@@ -1,0 +1,21 @@
+{
+  "Patient/test-patient-thornton-001": "db5fab6f-7e01-476d-a58f-efc7535529eb",
+  "Practitioner/test-pract-chen-001": "4efb9818-f9c8-4490-9b1e-815c95d7dd39",
+  "CareTeam/test-careteam-001": "d6d63086-910d-42fa-a1f3-a9fda1d8a4c8",
+  "Coverage/test-coverage-bcbs-001": "a3065c20-09a2-487b-b4ff-c74bb82b739b",
+  "Encounter/test-enc-001": "e50a33e6-7398-459a-a11f-9112841ca955",
+  "Condition/test-cond-dm-001": "2f9c260a-65db-4a03-bf75-fbac72382e05",
+  "Condition/test-cond-htn-001": "47ca418b-dd90-4e82-bd35-4fa2ef6e4558",
+  "Condition/test-cond-ckd-001": "10a5a2ca-db75-430c-acb4-218fc762ceda",
+  "Observation/test-obs-hba1c-001": "d162ad53-1208-49da-8c9d-cca4da5f6dbd",
+  "Observation/test-obs-glucose-001": "cada006a-6d88-421d-8ed1-c2314d7ed010",
+  "Observation/test-obs-bp-001": "1c717431-f0de-4bae-bc3e-8867e63d3873",
+  "Observation/test-obs-bmi-001": "434b6943-b595-4e2e-98a9-8215bfbb1c42",
+  "Observation/test-obs-weight-001": "8cfca9f2-3057-434c-b28c-4ddf9d0e30ee",
+  "MedicationRequest/test-med-insulin-001": "16c91c0d-8b8d-4e4a-8ea2-c084da0f59ca",
+  "MedicationRequest/test-med-metformin-001": "48db4eec-f621-4dee-b922-8b685fc20aa4",
+  "AllergyIntolerance/test-allergy-pcn-001": "90ba0f48-49af-48da-98e0-476003163c9b",
+  "ClinicalImpression/test-ci-001": "d7d81795-dd99-4682-b7ca-865daeef4cf8",
+  "CarePlan/test-cp-001": "172460bd-34fa-4d37-af98-119c2fba5e0c",
+  "DetectedIssue/test-di-001": "9828e48a-8c69-4638-b57b-a67824599cf7"
+}

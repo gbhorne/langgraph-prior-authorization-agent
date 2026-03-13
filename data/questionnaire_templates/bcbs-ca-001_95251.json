@@ -1,0 +1,50 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "cgm-pa-bcbs-ca-001-95251",
+  "url": "http://test.bcbsca.com/fhir/Questionnaire/cgm-pa",
+  "version": "2026.1",
+  "name": "CGMPriorAuthorizationBCBSCA",
+  "title": "Continuous Glucose Monitoring Prior Authorization - BCBS CA",
+  "status": "active",
+  "subjectType": [
+    "Patient"
+  ],
+  "item": [
+    {
+      "linkId": "q1",
+      "text": "Does the patient have a confirmed diagnosis of Type 1 or Type 2 Diabetes Mellitus?",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "linkId": "q2",
+      "text": "What is the patient's most recent HbA1c value and date?",
+      "type": "string",
+      "required": true
+    },
+    {
+      "linkId": "q3",
+      "text": "Is the patient currently on insulin therapy (basal, bolus, or pump)?",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "linkId": "q4",
+      "text": "What insulin product and dose is the patient currently prescribed?",
+      "type": "string",
+      "required": true
+    },
+    {
+      "linkId": "q5",
+      "text": "Does the patient have any contraindications to CGM device use?",
+      "type": "boolean",
+      "required": false
+    },
+    {
+      "linkId": "q6",
+      "text": "What is the clinical justification for CGM at this time?",
+      "type": "string",
+      "required": true
+    }
+  ]
+}

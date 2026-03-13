@@ -1,0 +1,7 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "prior_auth": "./langgraph_prior_auth/graph.py:graph"
+  },
+  "env": ".env"
+}
