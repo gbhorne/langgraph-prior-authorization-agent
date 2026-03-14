@@ -40,6 +40,8 @@ A clinician orders CPT 95251 (Continuous Glucose Monitoring) for a patient with 
 
 ## Architecture
 
+![LangGraph Prior Authorization Agent - architecture](docs/PA_Architecture_LangGraph.svg)
+
 ```
 __start__
     │
