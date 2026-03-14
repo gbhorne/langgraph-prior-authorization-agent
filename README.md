@@ -2,15 +2,14 @@
 
 > **Framework comparison:** This is a LangGraph rebuild of the [ADK Prior Authorization Agent](https://github.com/gbhorne/adk-prior-authorization-agent). Same clinical pipeline, same GCP stack, different orchestration architecture. Built to demonstrate the tradeoffs between LLM-driven orchestration (Google ADK) and deterministic graph execution (LangGraph).
 
-A production-grade Prior Authorization Agent that automates the full PA lifecycle — from coverage verification through payer submission — using the Da Vinci CRD/DTR/PAS trilogy, Google Cloud Healthcare FHIR R4, and LangGraph's deterministic StateGraph with native human-in-the-loop interrupts.
+A production-grade Prior Authorization Agent that automates the full PA lifecycle - from coverage verification through payer submission - using the Da Vinci CRD/DTR/PAS trilogy, Google Cloud Healthcare FHIR R4, and LangGraph's deterministic StateGraph with native human-in-the-loop interrupts.
 
 ---
 
 ## Why Two Frameworks?
 
-The [ADK version](https://github.com/gbhorne/adk-prior-authorization-agent) lets Gemini 2.5 Flash orchestrate the pipeline autonomously — deciding which tool to call next, handling ambiguous questionnaire answers, and surfacing early-exit conditions without a single explicit branch. It completed the full PA-1 through PA-5 pipeline in ~81 seconds end-to-end.
 
-This LangGraph version rebuilds the same pipeline with deterministic graph edges. Every routing decision is explicit code. Every state transition is typed. The human review gate is a native graph interrupt — not an upstream workflow convention.
+This LangGraph version rebuilds the same pipeline with deterministic graph edges. Every routing decision is explicit code. Every state transition is typed. The human review gate is a native graph interrupt - not an upstream workflow convention.
 
 | Dimension | ADK | LangGraph |
 |---|---|---|
@@ -29,12 +28,12 @@ Neither is better. The choice depends on the requirement. This build demonstrate
 
 A clinician orders CPT 95251 (Continuous Glucose Monitoring) for a patient with Type 2 Diabetes. The agent autonomously:
 
-1. **PA-1** — Calls the payer's CDS Hooks CRD endpoint to determine if PA is required
-2. **PA-2** — Fetches the payer's DTR questionnaire (with Firestore cache)
-3. **PA-3** — Uses Gemini to answer each questionnaire item with citations to real FHIR resources
-4. **PA-4** — Assembles a Da Vinci PAS-compliant FHIR transaction bundle and runs Cloud DLP audit
-5. **INTERRUPT** — Graph pauses. Clinician inspects bundle, DLP findings, and citation failures
-6. **PA-5** — On clinician approval, submits to payer `$submit`, writes ClaimResponse to FHIR, publishes to Pub/Sub
+1. **PA-1** - Calls the payer's CDS Hooks CRD endpoint to determine if PA is required
+2. **PA-2** - Fetches the payer's DTR questionnaire (with Firestore cache)
+3. **PA-3** - Uses Gemini to answer each questionnaire item with citations to real FHIR resources
+4. **PA-4** - Assembles a Da Vinci PAS-compliant FHIR transaction bundle and runs Cloud DLP audit
+5. **INTERRUPT** - Graph pauses. Clinician inspects bundle, DLP findings, and citation failures
+6. **PA-5** - On clinician approval, submits to payer `$submit`, writes ClaimResponse to FHIR, publishes to Pub/Sub
 
 ---
 
@@ -42,56 +41,31 @@ A clinician orders CPT 95251 (Continuous Glucose Monitoring) for a patient with 
 
 ![LangGraph Prior Authorization Agent - architecture](docs/PA_Architecture_LangGraph.svg)
 
-```
-__start__
-    │
-    ▼
-coverage_check ──[PA not required or error]──► __end__
-    │
-    ▼ [PA required]
-dtr_fetch
-    │
-    ▼
-questionnaire_filler ──[citation hard fail or error]──► __end__
-    │
-    ▼ [answers complete]
-bundle_assembler ──[DLP block or error]──► __end__
-    │
-    ▼ [DLP passed]
-INTERRUPT — clinician review
-    │
-    ▼ [approved]
-pas_submit
-    │
-    ▼
-__end__
-```
-
 
 ![LangGraph Studio - node execution waterfall with full state output](docs/screenshots/langgraph_studio_execution.png)
 
-*LangGraph Studio showing the full execution: coverage_check (2.33s), dtr_fetch (1.82s), questionnaire_filler (6.69s), bundle_assembler (1.92s), with complete PAState output on the right — pa_required: true, dlp_blocked: false, missing_required_count: 0, pas_bundle_entries: 5.*
+*LangGraph Studio showing the full execution: coverage_check (2.33s), dtr_fetch (1.82s), questionnaire_filler (6.69s), bundle_assembler (1.92s), with complete PAState output on the right - pa_required: true, dlp_blocked: false, missing_required_count: 0, pas_bundle_entries: 5.*
 
 ![LangGraph Studio - human-in-the-loop interrupt before payer submission](docs/screenshots/langgraph_studio_interrupt.png)
 
 *LangGraph Studio showing the human-in-the-loop interrupt: graph pauses after PA-4, clinician sees the Continue button before PA-5 fires.*
 
 
-![LangSmith trace detail — node waterfall with full state output](docs/screenshots/langsmith_trace_detail.png)
+![LangSmith trace detail - node waterfall with full state output](docs/screenshots/langsmith_trace_detail.png)
 
 *LangSmith trace showing per-node execution: coverage_check (1.87s), dtr_fetch (1.63s), questionnaire_filler (6.87s), bundle_assembler (1.51s). Output panel confirms coverage_status: PA_REQUIRED, questionnaire_id: cgm-pa-bcbs-ca-001-95251, all errors null.*
 
-![LangGraph Studio — live execution with state panel](docs/screenshots/langgraph_studio_execution.png)
+![LangGraph Studio - live execution with state panel](docs/screenshots/langgraph_studio_execution.png)
 
-*LangGraph Studio: full node waterfall with timing and complete PAState output — pa_required: true, dlp_blocked: false, missing_required_count: 0, pas_bundle_entries: 5.*
+*LangGraph Studio: full node waterfall with timing and complete PAState output - pa_required: true, dlp_blocked: false, missing_required_count: 0, pas_bundle_entries: 5.*
 
-![LangGraph Studio — human-in-the-loop interrupt before payer submission](docs/screenshots/langgraph_studio_interrupt.png)
+![LangGraph Studio - human-in-the-loop interrupt before payer submission](docs/screenshots/langgraph_studio_interrupt.png)
 
 *Human-in-the-loop interrupt: graph pauses after PA-4 with a Continue button before PA-5 fires. The clinician reviews the assembled bundle and DLP findings before approving submission.*
 
 ### Human-in-the-loop
 
-The graph compiles with `interrupt_before=["pas_submit"]`. After PA-4 completes, the graph freezes — no LLM running, no GCP cost accruing. The clinician retrieves state, inspects the assembled PAS bundle and DLP findings, then resumes with `graph.invoke(None, config=config)`. Every state snapshot is stored in the checkpointer with a timestamp — full audit trail per `thread_id`.
+The graph compiles with `interrupt_before=["pas_submit"]`. After PA-4 completes, the graph freezes - no LLM running, no GCP cost accruing. The clinician retrieves state, inspects the assembled PAS bundle and DLP findings, then resumes with `graph.invoke(None, config=config)`. Every state snapshot is stored in the checkpointer with a timestamp - full audit trail per `thread_id`.
 
 ---
 
@@ -119,7 +93,7 @@ The graph compiles with `interrupt_before=["pas_submit"]`. After PA-4 completes,
 langgraph-prior-authorization-agent/
 ├── langgraph_prior_auth/
 │   ├── __init__.py
-│   ├── graph.py          # StateGraph — 5 nodes, conditional edges, interrupt
+│   ├── graph.py          # StateGraph - 5 nodes, conditional edges, interrupt
 │   └── run.py            # Two-phase runner with human-in-the-loop demo
 ├── agents/prior_auth/
 │   ├── agent.py          # Original async PA orchestrator
@@ -172,10 +146,10 @@ LANGCHAIN_PROJECT=prior-auth-langgraph
 ### Run with the two-phase runner
 
 ```powershell
-# Terminal 1 — mock payer server
+# Terminal 1 - mock payer server
 python scripts/mock_payer_server.py
 
-# Terminal 2 — run the graph
+# Terminal 2 - run the graph
 python -m langgraph_prior_auth.run
 ```
 
@@ -184,10 +158,10 @@ Phase 1 runs PA-1 through PA-4 and pauses. Review the bundle summary and DLP fin
 ### Run with LangGraph Studio
 
 ```powershell
-# Terminal 1 — mock payer server
+# Terminal 1 - mock payer server
 python scripts/mock_payer_server.py
 
-# Terminal 2 — LangGraph dev server
+# Terminal 2 - LangGraph dev server
 langgraph dev
 ```
 
@@ -203,7 +177,7 @@ Every run is traced to LangSmith with per-node latency, state diffs, and token c
 |---|---|
 | coverage_check | 1.8s |
 | dtr_fetch | 0.1s (cache hit) / 1.6s (miss) |
-| questionnaire_filler | 6–20s (Gemini) |
+| questionnaire_filler | 6-20s (Gemini) |
 | bundle_assembler | 1.5s |
 | pas_submit | 0.8s |
 
@@ -235,5 +209,5 @@ All patient data, payer identifiers, clinical records, and submissions in this r
 
 ## Related
 
-- [ADK Prior Authorization Agent](https://github.com/gbhorne/adk-prior-authorization-agent) — the original LLM-orchestrated version
-- [ADK Retail Agents](https://github.com/gbhorne/adk-retail-agents) — multi-agent retail analytics on Google ADK
+- [ADK Prior Authorization Agent](https://github.com/gbhorne/adk-prior-authorization-agent) - the original LLM-orchestrated version
+- [ADK Retail Agents](https://github.com/gbhorne/adk-retail-agents) - multi-agent retail analytics on Google ADK
