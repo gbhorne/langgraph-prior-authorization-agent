@@ -42,6 +42,53 @@ A clinician orders CPT 95251 (Continuous Glucose Monitoring) for a patient with 
 
 ![LangGraph Prior Authorization Agent - architecture](docs/PA_Architecture_LangGraph.svg)
 
+```
+__start__
+    │
+    ▼
+coverage_check ──[PA not required or error]──► __end__
+    │
+    ▼ [PA required]
+dtr_fetch
+    │
+    ▼
+questionnaire_filler ──[citation hard fail or error]──► __end__
+    │
+    ▼ [answers complete]
+bundle_assembler ──[DLP block or error]──► __end__
+    │
+    ▼ [DLP passed]
+INTERRUPT — clinician review
+    │
+    ▼ [approved]
+pas_submit
+    │
+    ▼
+__end__
+```
+
+
+![LangGraph Studio - node execution waterfall with full state output](docs/screenshots/langgraph_studio_execution.png)
+
+*LangGraph Studio showing the full execution: coverage_check (2.33s), dtr_fetch (1.82s), questionnaire_filler (6.69s), bundle_assembler (1.92s), with complete PAState output on the right — pa_required: true, dlp_blocked: false, missing_required_count: 0, pas_bundle_entries: 5.*
+
+![LangGraph Studio - human-in-the-loop interrupt before payer submission](docs/screenshots/langgraph_studio_interrupt.png)
+
+*LangGraph Studio showing the human-in-the-loop interrupt: graph pauses after PA-4, clinician sees the Continue button before PA-5 fires.*
+
+
+![LangSmith trace detail — node waterfall with full state output](docs/screenshots/langsmith_trace_detail.png)
+
+*LangSmith trace showing per-node execution: coverage_check (1.87s), dtr_fetch (1.63s), questionnaire_filler (6.87s), bundle_assembler (1.51s). Output panel confirms coverage_status: PA_REQUIRED, questionnaire_id: cgm-pa-bcbs-ca-001-95251, all errors null.*
+
+![LangGraph Studio — live execution with state panel](docs/screenshots/langgraph_studio_execution.png)
+
+*LangGraph Studio: full node waterfall with timing and complete PAState output — pa_required: true, dlp_blocked: false, missing_required_count: 0, pas_bundle_entries: 5.*
+
+![LangGraph Studio — human-in-the-loop interrupt before payer submission](docs/screenshots/langgraph_studio_interrupt.png)
+
+*Human-in-the-loop interrupt: graph pauses after PA-4 with a Continue button before PA-5 fires. The clinician reviews the assembled bundle and DLP findings before approving submission.*
+
 ### Human-in-the-loop
 
 The graph compiles with `interrupt_before=["pas_submit"]`. After PA-4 completes, the graph freezes — no LLM running, no GCP cost accruing. The clinician retrieves state, inspects the assembled PAS bundle and DLP findings, then resumes with `graph.invoke(None, config=config)`. Every state snapshot is stored in the checkpointer with a timestamp — full audit trail per `thread_id`.
