@@ -42,31 +42,6 @@ A clinician orders CPT 95251 (Continuous Glucose Monitoring) for a patient with 
 
 ![LangGraph Prior Authorization Agent - architecture](docs/PA_Architecture_LangGraph.svg)
 
-```
-__start__
-    │
-    ▼
-coverage_check ──[PA not required or error]──► __end__
-    │
-    ▼ [PA required]
-dtr_fetch
-    │
-    ▼
-questionnaire_filler ──[citation hard fail or error]──► __end__
-    │
-    ▼ [answers complete]
-bundle_assembler ──[DLP block or error]──► __end__
-    │
-    ▼ [DLP passed]
-INTERRUPT — clinician review
-    │
-    ▼ [approved]
-pas_submit
-    │
-    ▼
-__end__
-```
-
 ### Human-in-the-loop
 
 The graph compiles with `interrupt_before=["pas_submit"]`. After PA-4 completes, the graph freezes — no LLM running, no GCP cost accruing. The clinician retrieves state, inspects the assembled PAS bundle and DLP findings, then resumes with `graph.invoke(None, config=config)`. Every state snapshot is stored in the checkpointer with a timestamp — full audit trail per `thread_id`.
